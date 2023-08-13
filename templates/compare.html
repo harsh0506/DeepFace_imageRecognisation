@@ -99,7 +99,7 @@
     <script>
         const fileInput1 = document.getElementById('file-upload1');
         const fileInput2 = document.getElementById('file-upload2');
-        const compareButton = document.getElementById('compare-button');
+        const compareButton = document.getElementById('compare-buttonz');
         const img1 = document.getElementById('img1');
         const img2 = document.getElementById('img2');
         const resultDiv = document.getElementById('result');
@@ -127,10 +127,11 @@
 
                 const data = await response.json();
 
-                if (data && data.result === "True") {
-                    resultDiv.innerText = "Same";
-                } else {
-                    resultDiv.innerText = "Not Same";
+                if (data.result === "True"){
+                    alert("the images are similar")
+                }
+                else{
+                    aler("Then images are not similar")
                 }
 
                 console.log(data);
