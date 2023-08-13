@@ -1,30 +1,182 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Face Recognition App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clifford: '#da373d',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
+
 <body>
-    <h1>Face Recognition App</h1>
-    <a href="/compare1">compare</a>
-    <a href="/">register and re</a>
 
-    <h2>Register a Face</h2>
-    <form action="/register" method="post" enctype="multipart/form-data">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
-        <label for="register-file">Select Image:</label>
-        <input type="file" id="register-file" name="file" accept=".jpg, .jpeg, .png" required><br>
-        <button type="submit">Register</button>
-    </form>
+    <header class="header sticky top-0 bg-white shadow-md flex items-center justify-between px-8 py-02">
+        <!-- logo -->
+        <h1 class="w-3/12">
+            <a style="font-size:30px; font-weight: 500;" href="/compare1">
+                Face Detector
+            </a>
+        </h1>
 
-    <h2>Recognize a Face</h2>
-    <form action="/recognize" method="post" enctype="multipart/form-data">
-        <label for="recognize-file">Select Image:</label>
-        <input type="file" id="recognize-file" name="file" accept=".jpg, .jpeg, .png" required><br>
-        <button type="submit">Recognize</button>
-    </form>
+        <!-- navigation -->
+        <nav class="nav font-semibold text-lg">
+            <ul class="flex items-center">
+                <li
+                    class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer active">
+                    <a href="/compare1">compare</a>
+                </li>
+                <li
+                    class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                    <a href="/">register and re</a>
+                </li>
+            </ul>
+        </nav>
 
-    <h2>Registered Faces</h2>
-   
+    </header>
+
+    <div class="text-center">
+        Recognise and Register image
+        </h1>
+
+        <p class="max-w-lg mx-auto mt-4 text-gray-500">
+            Add image to either recognize or register images
+        </p>
+        <p class="result max-w-lg mx-auto mt-4 text-gray-500"></p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2">
+
+        <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+            <div id="img1" class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md">
+            </div>
+
+            <div class="w-56 -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800">
+                <h3 class="py-2 font-bold tracking-wide text-center text-gray-800 uppercase dark:text-white">
+                    Register the image</h3>
+
+                <div class="flex-column items-center justify-between px-3 py-2 bg-gray-200 dark:bg-gray-700">
+                    <input id="register-file" name="file" accept=".jpg, .jpeg, .png" type="file"><br />
+                    <input placeholder="enter a name" type="text" id="name" name="name" required><br />
+                    <div class="flex items-center justify-center">
+                        <button style="width: 15vw; background:rgb(14, 19, 42)" id="submit1"
+                            class="px-1 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-grey-00 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
+                            type="submit">Register</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+            <div id="img2" class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md">
+            </div>
+
+            <div class="w-56 -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800">
+                <h3 class="py-2 font-bold tracking-wide text-center text-gray-800 uppercase dark:text-white">
+                    Recognise the image</h3>
+
+                <div class="flex-column items-center justify-between px-3 py-2 bg-gray-200 dark:bg-gray-700">
+                    <input type="file" id="recognize-file" name="file" accept=".jpg, .jpeg, .png"><br />
+                    <div class="flex items-center justify-center">
+                        <button style="width: 15vw; background:rgb(14, 19, 42)" id="submit2"
+                            class="px-1 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-grey-00 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
+                            type="submit">Recognise</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textinput1 = document.getElementById("name")
+        const fileinput1 = document.getElementById("register-file")
+        const fileinput2 = document.getElementById("recognize-file")
+        const sub1 = document.getElementById("submit1")
+        const sub2 = document.getElementById("submit2")
+
+        const img1 = document.getElementById('img1');
+        const img2 = document.getElementById('img2');
+
+        fileinput1.addEventListener('change', handleFileInputChange);
+        fileinput2.addEventListener('change', handleFileInputChange2);
+        sub1.addEventListener('click', compareImages);
+        sub2.addEventListener("click", Recognize)
+
+        function handleFileInputChange(event) {
+            const fileInput = event.target;
+            img1.style.backgroundImage = `url(${URL.createObjectURL(fileInput.files[0])})`;
+        }
+
+        function handleFileInputChange2(event) {
+            const fileInput = event.target;
+            img2.style.backgroundImage = `url(${URL.createObjectURL(fileInput.files[0])})`;
+            img2.style.backgroundImage = `url(${fileinput2.files[0]})`
+        }
+
+        async function Recognize() {
+
+            const fileInputVAlue = fileinput2.files[0];
+            if (!fileInputVAlue) {
+                alert("please choose a image")
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', fileInputVAlue);
+            try {
+                const response = await fetch('/recognize', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function compareImages() {
+            const textInputValue = textinput1.value.trim();
+            const fileInputValue = fileinput1.files[0];
+
+            if (textInputValue === '' || !fileInputValue) {
+                alert("Text input or file input is empty. Cannot submit.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file1', fileInputValue);
+            formData.append('name', textInputValue);
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                console.log(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+    </script>
+
 </body>
+
 </html>

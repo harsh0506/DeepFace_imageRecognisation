@@ -5,41 +5,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Face Recognition App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clifford: '#da373d',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>
-    <h1>Face Recognition App</h1>
+    <header class="header sticky top-0 bg-white shadow-md flex items-center justify-between px-8 py-02">
+        <!-- logo -->
+        <h1 class="w-3/12">
+            <a style="font-size:30px; font-weight: 500;" href="/compare1">
+                Face Detector
+            </a>
+        </h1>
 
-    <a href="/compare1">compare</a><br>
-    <a href="/">register and re</a>
-    
-    <form action="/compare" method="post" enctype="multipart/form-data">
-        <input type="file" name="file1">
-        <input type="file" name="file2">
-        <button type="submit">Compare Faces</button>
-    </form>
+        <!-- navigation -->
+        <nav class="nav font-semibold text-lg">
+            <ul class="flex items-center">
+                <li
+                    class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer active">
+                    <a href="/compare1">compare</a>
+                </li>
+                <li
+                    class="p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
+                    <a href="/">register and re</a>
+                </li>
+            </ul>
+        </nav>
 
-    <img src="" alt="" id="img1"><img id="img2" src="" alt="">
+    </header>
 
-    <!-- Display comparison result -->
-    <div id="result" style="margin-top: 20px;"></div>
+    <section class="bg-white dark:bg-white-10000">
+        <div class="container px-6 py-10 mx-auto">
+            <div class="text-center">
+                <h1 style="color:rgb(58, 58, 58)" class="text-2xl font-semibold text-gray-300 capitalize lg:text-3xl dark:text-white">Compare the images
+                </h1>
+
+                <p class="max-w-lg mx-auto mt-4 text-gray-500">
+                    Add two Images and click the button at bottom and wait for the result
+                </p>
+                <p class="result max-w-lg mx-auto mt-4 text-gray-500"></p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8 mt-8 lg:grid-cols-2">
+
+                <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+                    <div id="img1" class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md">
+                    </div>
+
+                    <div class="w-56 -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800">
+                        <h3 class="py-2 font-bold tracking-wide text-center text-gray-800 uppercase dark:text-white">
+                            Image 1</h3>
+
+                        <div class="flex items-center justify-between px-3 py-2 bg-gray-200 dark:bg-gray-700">
+                            <input id="file-upload1" name="file1" type="file">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto">
+                    <div id="img2" class="w-full h-64 bg-gray-300 bg-center bg-cover rounded-lg shadow-md">
+                    </div>
+
+                    <div class="w-56 -mt-10 overflow-hidden bg-white rounded-lg shadow-lg md:w-64 dark:bg-gray-800">
+                        <h3 class="py-2 font-bold tracking-wide text-center text-gray-800 uppercase dark:text-white">
+                            Image 2</h3>
+
+                        <div class="flex items-center justify-between px-3 py-2 bg-gray-200 dark:bg-gray-700">
+                            <input id="file-upload2" name="file2" type="file">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center">
+                    <button style="width: 15vw; background:rgb(58, 58, 58)" id="compare-buttonz" class="px-1 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-grey-00 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80">Compare the images</button>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
 
     <script>
-        const form = document.querySelector('form');
+        const fileInput1 = document.getElementById('file-upload1');
+        const fileInput2 = document.getElementById('file-upload2');
+        const compareButton = document.getElementById('compare-button');
+        const img1 = document.getElementById('img1');
+        const img2 = document.getElementById('img2');
         const resultDiv = document.getElementById('result');
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
+        fileInput1.addEventListener('change', handleFileInputChange);
+        fileInput2.addEventListener('change', handleFileInputChange);
+        compareButton.addEventListener('click', compareImages);
 
-            // Create a FormData object to send the files
-            const formData = new FormData(form);
+        function handleFileInputChange(event) {
+            const fileInput = event.target;
+            const imgElement = fileInput === fileInput1 ? img1 : img2;
+            imgElement.style.backgroundImage = `url(${URL.createObjectURL(fileInput.files[0])})`;
+        }
 
-            // Display uploaded images
-            img1.src = URL.createObjectURL(form.elements.file1.files[0]);
-            img2.src = URL.createObjectURL(form.elements.file2.files[0]);
+        async function compareImages() {
+            const formData = new FormData();
+            formData.append('file1', fileInput1.files[0]);
+            formData.append('file2', fileInput2.files[0]);
 
             try {
-                // Send a POST request to the Flask API
                 const response = await fetch('/compare', {
                     method: 'POST',
                     body: formData
@@ -47,16 +127,19 @@
 
                 const data = await response.json();
 
-                data && data.result === "True" ? resultDiv.innerText = "same" : resultDiv.innerText = "not"
+                if (data && data.result === "True") {
+                    resultDiv.innerText = "Same";
+                } else {
+                    resultDiv.innerText = "Not Same";
+                }
 
-                // Display the result on the page
-                console.log(data)
+                console.log(data);
             } catch (error) {
                 console.error('Error:', error);
             }
-        });
+        }
     </script>
+
 </body>
 
 </html>
-
