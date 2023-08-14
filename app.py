@@ -48,7 +48,7 @@ def compare_faces():
         image2_array = np.array(image2)
 
         # Compare the two images using DeepFace library
-        result = DeepFace.verify(image1_array, image2_array ,  enforce_detection=False)
+        result = DeepFace.verify(image1_array, image2_array ,model_name='ArcFace',  enforce_detection=False)
         # Return a JSON response with the result
         return json.dumps({'result': str(result['verified'])})
 

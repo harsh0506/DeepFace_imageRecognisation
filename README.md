@@ -75,3 +75,7 @@ This section outlines the deployment process of your containerized Flask applica
    - Push the tagged Docker image to ECR using `docker push`.
 
 
+Important Note:
+As of now, the project is not deployed on AWS due to potential associated costs. Deploying applications on AWS, especially with resources like ECS, can result in charges for the usage of resources like compute instances, storage, data transfer, etc. Therefore, the provided project documentation is meant for educational and learning purposes.
+
+Please be cautious and mindful of potential costs if you decide to proceed with deploying the application on AWS or any other cloud service. Always consider your budget and needs before deploying any application in a production environment.
